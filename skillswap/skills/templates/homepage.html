@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Master Skills With Expert Mentors</h1>
+        <p>Book 1-on-1 mentorship sessions and accelerate your growth.</p>
+
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'teachers-page' %}" class="btn primary-btn">Browse Teachers</a>
+        {% else %}
+            <a href="{% url 'signup' %}" class="btn primary-btn">Get Started</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h3>Find Experts</h3>
+        <p>Connect with experienced teachers in various domains.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Book Sessions</h3>
+        <p>Schedule sessions quickly and easily.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Track Progress</h3>
+        <p>Manage and monitor your mentorship journey.</p>
+    </div>
+</section>
+
+<footer class="footer">
+    © 2026 SkillLearner | Built by Ronak 🚀
+</footer>
+
+{% endblock %}

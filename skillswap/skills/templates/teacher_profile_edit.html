@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Edit Profile</h2>
+
+        <form id="profileForm">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <input type="text" id="skill" placeholder="Skill">
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="experience" placeholder="Experience (years)">
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="charge" placeholder="Charge per hour">
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="availability" placeholder="Availability">
+            </div>
+
+            <button type="submit" class="auth-btn">Update</button>
+        </form>
+
+        <p id="profileMessage" class="message"></p>
+    </div>
+</div>
+
+<script>
+document.getElementById("profileForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    fetch("/api/teacher/profile/", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+            teacher_skill: document.getElementById("skill").value,
+            teacher_experience: document.getElementById("experience").value,
+            teacher_charge: document.getElementById("charge").value,
+            teacher_availability: document.getElementById("availability").value
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Update failed");
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById("profileMessage").innerText = "Profile updated successfully!";
+    })
+    .catch(error => {
+        document.getElementById("profileMessage").innerText = "Update failed.";
+    });
+});
+</script>
+
+{% endblock %}

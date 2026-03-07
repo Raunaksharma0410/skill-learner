@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center; margin-top:30px;">Booking Requests</h2>
+
+<div id="bookingContainer" style="padding:40px;"></div>
+
+<script>
+
+function loadBookings() {
+    fetch("/api/teacher/bookings/", {
+        credentials: "same-origin"
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const container = document.getElementById("bookingContainer");
+        container.innerHTML = "";
+
+        if (data.length === 0) {
+            container.innerHTML = "<p>No bookings yet.</p>";
+            return;
+        }
+
+        data.forEach(booking => {
+            container.innerHTML += `
+                <div style="background:white; padding:20px; margin-bottom:20px; border-radius:10px;">
+                    <p><strong>Student:</strong> ${booking.student}</p>
+                    <p><strong>Date:</strong> ${booking.date}</p>
+                    <p><strong>Time:</strong> ${booking.time}</p>
+                    <p><strong>Status:</strong> ${booking.status}</p>
+
+                    ${booking.status === "pending" ? `
+                        <button onclick="updateStatus(${booking.id}, 'approved')">Approve</button>
+                        <button onclick="updateStatus(${booking.id}, 'rejected')">Reject</button>
+                    ` : ""}
+                </div>
+            `;
+        });
+
+    });
+}
+
+function updateStatus(id, status) {
+    fetch(`/api/teacher/bookings/${id}/`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ status: status })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Updated!");
+        loadBookings();
+    });
+}
+
+loadBookings();
+
+</script>
+
+{% endblock %}
